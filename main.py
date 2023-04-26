@@ -4,9 +4,17 @@ import os
 import pyautogui
 
 # port.txt 파일에 저장된 포트 번호를 읽어옴
-f = open(os.getcwd() + "\port.txt")
-port_data = f.read()
-f.close()
+try:
+    f = open(os.getcwd() + "\port.txt")
+    port_data = f.read()
+    f.close()
+except:
+    print("port.txt 파일이 없습니다.")
+    pyautogui.alert("port.txt 파일이 없습니다.")
+    port_data = input("포트 번호를 입력해 주세요: ")
+    f = open(os.getcwd() + "\port.txt", 'w')
+    f.write(port_data)
+    f.close()
 
 try:
     py_serial = serial.Serial(
@@ -25,12 +33,15 @@ except:
     exit()
 
 while True:
-    time.sleep(0.1)
     if py_serial.readable():
         response = py_serial.readline()
-        command = str(response[:len(response)-2].decode())
-        if command == "connected":
-            print("Arduino connected...System start")
-            continue
-        else:
-            print(command)
+        a_command = str(response[:len(response)-2].decode())
+
+        print(a_command)
+    
+    c_commend = input('아두이노에게 내릴 명령:')
+    if c_commend == "exit":
+        print("시리얼 통신 종료")
+        break
+    py_serial.write(c_commend.encode())
+    time.sleep(0.1)
