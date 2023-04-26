@@ -1,14 +1,13 @@
-#include <SoftwareSerial.h>
-SoftwareSerial btSerial(3, 4);
-char bt_read;
+
+char s_read;
 void setup() {
   Serial.begin(9600);
   Serial.println("connected");
 }
 
 void loop() {
-  if (btSerial.available()){
-    bt_read = btSerial.read();
-    // 작동 코드
+  if (Serial.available()){
+    s_read = Serial.read();
+    Serial.println(s_read);
   }
 }
