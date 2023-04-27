@@ -3,17 +3,32 @@ import os
 import time
 import pyautogui
 
-device = serial.tools.list_ports.comports()
-for port, desc, hwid in sorted(device):
-    # print(f"port: {port}: desc: {desc} hwid: [{hwid}]")
-    print(port)
-    desc = desc.split()[1].split('(')[0]
-    print(desc)
-    print(hwid)
-    if desc == "Leonardo":
-        print("아두이노 연결 성공")
-        port_data = port
+board_name = "Nano"
+try:
+    device = serial.tools.list_ports.comports()
 
+    print(device[0][1])
+    print(device[1])
+    print(len(device))
+
+    print("연결된 보드 확인\n---------------------------------------------------------------")
+    for port_list, desc, hwid in sorted(device):
+        print(port_list)
+        desc = desc.split()[1].split('(')[0]
+        print(desc)
+        print(hwid)
+        print("---------------------------------------------------------------")
+        # 보드 이름
+        if desc == board_name:
+            port_data = port_list
+    # if device[len(device)-1]:
+    #     print("{} 보드가 없습니다.\n{} : {} 보드에 연결을 시도합니다.".format(board_name, port_list, desc))
+    #     port_data = port_list
+    #     board_name = desc
+except:
+    print("연결된 보드가 없습니다.")
+    pyautogui.alert("연결된 보드가 없습니다.", "Error")
+    exit()
 try:
     py_serial = serial.Serial(
         # Window
@@ -28,7 +43,7 @@ try:
     )
 except:
     print("아두이노 연결 오류")
-    pyautogui.alert("아두이노 연결을 확인해 주세요.")
+    pyautogui.alert("아두이노 {}의 연결을 확인해 주세요.".format(board_name), "Error")
     exit()
 
 while True:
